@@ -9,7 +9,7 @@ services:
     expose:
       - "8080"
       - "5432"
-    image: postgres:12.2-alpine
+    image: postgres:18.4-alpine
     ports:
       - "5432:5432"
       - "8080:8080"
