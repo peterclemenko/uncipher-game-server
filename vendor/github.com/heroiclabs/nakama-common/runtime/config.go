@@ -93,6 +93,7 @@ type IAPConfig interface {
 	GetGoogle() IAPGoogleConfig
 	GetHuawei() IAPHuaweiConfig
 	GetFacebookInstant() IAPFacebookInstantConfig
+	GetSamsung() IAPSamsungConfig
 }
 
 type IAPAppleConfig interface {
@@ -104,8 +105,6 @@ type IAPGoogleConfig interface {
 	GetClientEmail() string
 	GetPrivateKey() string
 	GetNotificationsEndpointId() string
-	GetRefundCheckPeriodMin() int
-	GetPackageName() string
 }
 
 type SatoriConfig interface {
@@ -123,6 +122,10 @@ type IAPHuaweiConfig interface {
 
 type IAPFacebookInstantConfig interface {
 	GetAppSecret() string
+}
+
+type IAPSamsungConfig interface {
+	GetPackageName() string
 }
 
 type GoogleAuthConfig interface {
