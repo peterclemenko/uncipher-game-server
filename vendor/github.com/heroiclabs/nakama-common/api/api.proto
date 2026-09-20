@@ -19,6 +19,7 @@ syntax = "proto3";
 
 package nakama.api;
 
+import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
@@ -46,6 +47,8 @@ message Account {
   google.protobuf.Timestamp verify_time = 6;
   // The UNIX time (for gRPC clients) or ISO string (for REST clients) when the user's account was disabled/banned.
   google.protobuf.Timestamp disable_time = 7;
+  // The authentication provider identities linked to the user's account.
+  repeated AccountProviderIdentity providers = 8;
 }
 
 // Obtain a new authentication token using a refresh token.
@@ -134,6 +137,24 @@ message AccountGoogle {
   map<string, string> vars = 2;
 }
 
+// A provider identity linked to a user's account.
+message AccountProviderIdentity {
+  // The name the provider was registered under during runtime initialization.
+  string provider = 1;
+  // The user's ID with that provider.
+  string provider_user_id = 2;
+}
+
+// Send credentials for a runtime-registered authentication provider. Used with authenticate/link/unlink.
+message AccountProvider {
+  // The name the provider was registered under during runtime initialization.
+  string provider = 1;
+  // Opaque JSON passed through to the registered provider function.
+  google.protobuf.Struct payload = 2;
+  // Extra information that will be bundled in the session token.
+  map<string, string> vars = 3;
+}
+
 // Send a Steam token to the server. Used with authenticate/link/unlink.
 message AccountSteam {
   // The account token received from Steam to access their profile API.
@@ -148,6 +169,8 @@ message AddFriendsRequest {
   repeated string ids = 1;
   // The account username of a user.
   repeated string usernames = 2;
+  // Optional metadata to add to friends.
+  string metadata = 3;
 }
 
 // Add users to a group.
@@ -250,6 +273,16 @@ message AuthenticateGameCenterRequest {
 message AuthenticateGoogleRequest {
   // The Google account details.
   AccountGoogle account = 1;
+  // Register the account if the user does not already exist.
+  google.protobuf.BoolValue create = 2;
+  // Set the username on the account at register. Must be unique.
+  string username = 3;
+}
+
+// Authenticate against the server with a runtime-registered provider.
+message AuthenticateRequest {
+  // The provider account details.
+  AccountProvider account = 1;
   // Register the account if the user does not already exist.
   google.protobuf.BoolValue create = 2;
   // Set the username on the account at register. Must be unique.
@@ -422,6 +455,8 @@ message Friend {
   google.protobuf.Int32Value state = 2; // one of "Friend.State".
   // Time of the latest relationship update.
   google.protobuf.Timestamp update_time = 3;
+  // Metadata.
+  string metadata = 4;
 }
 
 // A collection of zero or more friends of the user.
@@ -669,7 +704,7 @@ message ListChannelMessagesRequest {
 
 // List friends for a user.
 message ListFriendsRequest {
-  // Max number of records to return. Between 1 and 100.
+  // Max number of records to return. Between 1 and 1000.
   google.protobuf.Int32Value limit = 1;
   // The friend state to list.
   google.protobuf.Int32Value state = 2;
@@ -1053,6 +1088,8 @@ message Tournament {
   Operator operator = 19;
   // Whether the leaderboard was created authoritatively or not.
   bool authoritative = 20;
+  // Whether the user must join the tournament before being able to submit scores.
+  bool join_required = 21;
 }
 
 // A list of tournaments.
@@ -1233,6 +1270,14 @@ message ValidatePurchaseFacebookInstantRequest {
   google.protobuf.BoolValue persist = 2;
 }
 
+// Samsung IAP Purchase validation request.
+message ValidatePurchaseSamsungRequest {
+  // The purchase ID returned by the Samsung IAP SDK PurchaseVo.
+  string purchase_id = 1;
+  // Persist the purchase so that seenBefore can be computed to protect against replay attacks.
+  google.protobuf.BoolValue persist = 2;
+}
+
 // Validated Purchase stored by Nakama.
 message ValidatedPurchase {
   // Purchase User ID.
@@ -1280,6 +1325,8 @@ enum StoreProvider {
   HUAWEI_APP_GALLERY = 2;
   // Facebook Instant Store
   FACEBOOK_INSTANT_STORE = 3;
+  // Samsung Galaxy Store
+  SAMSUNG_GALAXY_STORE = 4;
 }
 
 // Environment where a purchase/subscription took place,
@@ -1415,4 +1462,38 @@ enum Operator {
   INCREMENT = 3;
   // Override the leaderboard operator with DECREMENT.
   DECREMENT = 4;
+}
+
+// A request to list parties.
+message ListPartiesRequest {
+  // Limit the number of returned parties.
+  google.protobuf.Int32Value limit = 1;
+  // Optionally filter by open/closed parties.
+  google.protobuf.BoolValue open = 2;
+  // Arbitrary label query.
+  google.protobuf.StringValue query = 3;
+  // Cursor for the next page of results, if any.
+  google.protobuf.StringValue cursor = 4;
+}
+
+// Incoming information about a party.
+message Party {
+  // Unique party identifier.
+  string party_id = 1;
+  // Open flag.
+  bool open = 2;
+  // Hidden flag.
+  bool hidden = 3;
+  // Maximum number of party members.
+  int32 max_size = 4;
+  // The party label, if any.
+  string label = 5;
+}
+
+// A list of realtime matches.
+message PartyList {
+  // A number of parties corresponding to a list operation.
+  repeated Party parties = 1;
+  // A cursor to send when retrieving the next page, if any.
+  string cursor = 2;
 }

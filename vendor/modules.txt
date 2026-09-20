@@ -1,10 +1,10 @@
-# github.com/heroiclabs/nakama-common v1.35.0
-## explicit; go 1.23.3
+# github.com/heroiclabs/nakama-common v1.48.0
+## explicit; go 1.27.1
 github.com/heroiclabs/nakama-common/api
 github.com/heroiclabs/nakama-common/rtapi
 github.com/heroiclabs/nakama-common/runtime
-# google.golang.org/protobuf v1.35.2
-## explicit; go 1.21
+# google.golang.org/protobuf v1.36.12
+## explicit; go 1.23
 google.golang.org/protobuf/cmd/protoc-gen-go
 google.golang.org/protobuf/cmd/protoc-gen-go/internal_gengo
 google.golang.org/protobuf/compiler/protogen
@@ -30,6 +30,7 @@ google.golang.org/protobuf/internal/impl
 google.golang.org/protobuf/internal/msgfmt
 google.golang.org/protobuf/internal/order
 google.golang.org/protobuf/internal/pragma
+google.golang.org/protobuf/internal/protolazy
 google.golang.org/protobuf/internal/set
 google.golang.org/protobuf/internal/strs
 google.golang.org/protobuf/internal/version
@@ -44,6 +45,7 @@ google.golang.org/protobuf/runtime/protoimpl
 google.golang.org/protobuf/types/descriptorpb
 google.golang.org/protobuf/types/dynamicpb
 google.golang.org/protobuf/types/gofeaturespb
+google.golang.org/protobuf/types/known/structpb
 google.golang.org/protobuf/types/known/timestamppb
 google.golang.org/protobuf/types/known/wrapperspb
 google.golang.org/protobuf/types/pluginpb
